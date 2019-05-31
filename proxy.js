@@ -5,12 +5,11 @@ const http = require('http'),
   async = require('async'),
   color = require('colorful'),
   certMgr = require('./lib/certMgr'),
-  Recorder = require('./lib/recorder'),
+  //Recorder = require('./lib/recorder'),
   logUtil = require('./lib/log'),
   util = require('./lib/util'),
   events = require('events'),
   co = require('co'),
-  WebInterface = require('./lib/webInterface'),
   wsServerMgr = require('./lib/wsServerMgr'),
   ThrottleGroup = require('stream-throttle').ThrottleGroup;
 
@@ -70,7 +69,7 @@ class ProxyCore extends events.EventEmitter {
     config = config || {};
 
     this.status = PROXY_STATUS_INIT;
-    this.proxyPort = config.port;
+    this.proxyPort = config.port || 0; //端口为0则自动获取可用端口
     this.proxyType = /https/i.test(config.type || DEFAULT_TYPE) ? T_TYPE_HTTPS : T_TYPE_HTTP;
     this.proxyHostName = config.hostname || 'localhost';
     this.recorder = config.recorder;
@@ -82,10 +81,10 @@ class ProxyCore extends events.EventEmitter {
       throw new Error('root CA not found. Please run `anyproxy-ca` to generate one first.');
     } else if (this.proxyType === T_TYPE_HTTPS && !config.hostname) {
       throw new Error('hostname is required in https proxy');
-    } else if (!this.proxyPort) {
-      throw new Error('proxy port is required');
-    } else if (!this.recorder) {
-      throw new Error('recorder is required');
+    //} else if (!this.proxyPort && this.proxyPort !== 0) { //端口为0则自动获取可用端口
+      //throw new Error('proxy port is required');
+    //} else if (!this.recorder) { //允许不进行recorder
+      //throw new Error('recorder is required');
     } else if (config.forceProxyHttps && config.rule && config.rule.beforeDealHttpsRequest) {
       logUtil.printLog('both "-i(--intercept)" and rule.beforeDealHttpsRequest are specified, the "-i" option will be ignored.', logUtil.T_WARN);
       config.forceProxyHttps = false;
@@ -124,15 +123,15 @@ class ProxyCore extends events.EventEmitter {
   }
 
   /**
-  * manage all created socket
-  * for each new socket, we put them to a map;
-  * if the socket is closed itself, we remove it from the map
-  * when the `close` method is called, we'll close the sockes before the server closed
-  *
-  * @param {Socket} the http socket that is creating
-  * @returns undefined
-  * @memberOf ProxyCore
-  */
+   * manage all created socket
+   * for each new socket, we put them to a map;
+   * if the socket is closed itself, we remove it from the map
+   * when the `close` method is called, we'll close the sockes before the server closed
+   *
+   * @param {Socket} the http socket that is creating
+   * @returns undefined
+   * @memberOf ProxyCore
+   */
   handleExistConnections(socket) {
     const self = this;
     self.socketIndex ++;
@@ -202,14 +201,26 @@ class ProxyCore extends events.EventEmitter {
 
         //start proxy server
         function (callback) {
-          self.httpProxyServer.listen(self.proxyPort);
-          callback(null);
+          self.httpProxyServer.listen(self.proxyPort, (err) => {
+			  if (err) {
+				  throw err;
+			  }
+              //如果 self.proxyPort 是 0, 则可以在回调中获取自动分配的端口
+			  //console.log(self.httpProxyServer.address()); // { address: '::', family: 'IPv6', port: 61199 }
+              const port = self.httpProxyServer.address().port;
+			  //console.log('self.httpProxyServer.address().port : ' + port);
+			  self.proxyPort = port;
+			  //console.log('self.proxyPort #1 : ' + self.proxyPort);
+			  callback(null);
+          });
+          //callback(null);
         },
       ],
 
       //final callback
       (err, result) => {
         if (!err) {
+			//console.log('self.proxyPort #2 : ' + self.proxyPort);
           const tipText = (self.proxyType === T_TYPE_HTTP ? 'Http' : 'Https') + ' proxy started on port ' + self.proxyPort;
           logUtil.printLog(color.green(tipText));
 
@@ -283,7 +294,7 @@ class ProxyCore extends events.EventEmitter {
 
         this.httpProxyServer.close((error) => {
           if (error) {
-            console.error(error);
+            //console.error(error);
             logUtil.printLog(`proxy server close FAILED : ${error.message}`, logUtil.T_ERR);
           } else {
             this.httpProxyServer = null;
@@ -313,33 +324,20 @@ class ProxyServer extends ProxyCore {
    */
   constructor(config) {
     // prepare a recorder
-    const recorder = new Recorder();
+    //const recorder = new Recorder();
     const configForCore = Object.assign({
-      recorder,
+      //recorder,
     }, config);
 
     super(configForCore);
 
     this.proxyWebinterfaceConfig = config.webInterface;
-    this.recorder = recorder;
+    //this.recorder = recorder;
     this.webServerInstance = null;
   }
 
   start() {
-    // start web interface if neeeded
-    if (this.proxyWebinterfaceConfig && this.proxyWebinterfaceConfig.enable) {
-      this.webServerInstance = new WebInterface(this.proxyWebinterfaceConfig, this.recorder);
-      // start web server
-      this.webServerInstance.start().then(() => {
-        // start proxy core
-        super.start();
-      })
-      .catch((e) => {
-        this.emit('error', e);
-      });
-    } else {
       super.start();
-    }
   }
 
   close() {
@@ -379,8 +377,7 @@ class ProxyServer extends ProxyCore {
 
 module.exports.ProxyCore = ProxyCore;
 module.exports.ProxyServer = ProxyServer;
-module.exports.ProxyRecorder = Recorder;
-module.exports.ProxyWebServer = WebInterface;
+//module.exports.ProxyRecorder = Recorder;
 module.exports.utils = {
   systemProxyMgr: require('./lib/systemProxyMgr'),
   certMgr,
