@@ -1,9 +1,10 @@
-doctype html
-html(lang="en")
-  head
-    title Download rootCA
-    meta(name='viewport', content='initial-scale=1, maximum-scale=0.5, minimum-scale=1, user-scalable=no')
-  style.
+module.exports = (params) => {
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name='viewport' content='initial-scale=1, maximum-scale=0.5, minimum-scale=1, user-scalable=no' />
+<title>Download rootCA</title>
     body {
       color: #666;
       line-height: 1.5;
@@ -70,22 +71,31 @@ html(lang="en")
       line-height: 1.2;
       margin-bottom: 10px;
     }
-  body
-    .logo
-      span.any Any
-      span.proxy Proxy
-    .title Download:
-    .content Select a CA file to download, the .crt file is commonly used.
-    a(href="/fetchCrtFile?type=crt").button.primary rootCA.crt
-    a(href="/fetchCrtFile?type=cer").button rootCA.cer
-    .more More
-    .buttons(style='display: none')
-      a(href="/fetchCrtFile?type=pem").button rootCA.pem
-      a(href="/fetchCrtFile?type=der").button rootCA.der
-    .title User-Agent:
-    .content #{ua}
-    script(type='text/javascript').
+</style>
+</head>
+<body>
+    <div class="logo">
+      <span class="any">Any<span>
+      <span class="proxy">Proxy</span>
+    </div>
+    <div class="title">Download:</div>
+    <div class="content">Select a CA file to download, the .crt file is commonly used.</div>
+    <a href="/fetchCrtFile?type=crt" class="button primary">rootCA.crt</a>
+    <a href="/fetchCrtFile?type=cer" class="button">rootCA.cer</a>
+    <div class="more">More</div>
+    <div class="buttons" style='display: none'>
+      <a href="/fetchCrtFile?type=pem" class="button">rootCA.pem</a>
+      <a href="/fetchCrtFile?type=der" class="button">rootCA.der</a>
+    </div>
+    <div class="title">User-Agent:</div>
+    <div class="content">${params.ua}</div>
+    <script type='text/javascript'>
       window.document.querySelector('.more').addEventListener('click', function (e) {
         e.target.style.display = 'none';
         window.document.querySelector('.buttons').style.display = 'block';
       });
+    </script>
+</body>
+</html>
+`;
+};

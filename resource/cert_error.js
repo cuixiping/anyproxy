@@ -1,8 +1,10 @@
-doctype html
-html(lang="en")
-  head
-    title Security Vulnerable
-  style.
+module.exports = (params) => {
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Security Vulnerable</title>
+<style type="text/css">
     body {
       color: #666;
       line-height: 1.5;
@@ -36,11 +38,16 @@ html(lang="en")
       color: #999;
       margin-bottom: 10px;
     }
-  body
-    .container
-      div.title
-        | #{title}
-      div.explainCode
-        | #{code}
-      div.explain
-        div!= explain
+</style>
+</head>
+<body>
+    <div class="container">
+		
+      <div class="title">${params.title}</div>
+      <div class="explainCode">${params.code}</div>
+      <div class="explain">${params.explain}</div>
+    </div>
+</body>
+</html>
+`;
+};

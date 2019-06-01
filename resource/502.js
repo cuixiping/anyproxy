@@ -1,8 +1,10 @@
-doctype html
-html(lang="en")
-  head
-    title AnyProxy Inner Error
-  style.
+module.exports = (params) => {
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AnyProxy Inner Error</title>
+<style type="text/css">
     body {
       color: #666;
       line-height: 1.5;
@@ -58,24 +60,30 @@ html(lang="en")
     .tip {
       color: #808080;
     }
-  body
-    h1 # AnyProxy Inner Error
-    h3 Oops! Error happend when AnyProxy handle the request.
-    p.tip This is an error occurred inside AnyProxy, not from your target website.
-    .infoItem
-      .label
-        | Error:
-      .value #{error}
-    .infoItem
-      .label
-        | URL:
-      .value #{url}
-    if tipMessage
-      .infoItem
-        .label
-          | TIP:
-        .value!= tipMessage
-    p
-      ul.stackError
-        each item in errorStack
-          li= item
+</style>
+</head>
+<body>
+    <h1>AnyProxy Inner Error</h1>
+    <h3>Oops! Error happend when AnyProxy handle the request.</h3>
+    <p class="tip">This is an error occurred inside AnyProxy, not from your target website.</p>
+    <div class="infoItem">
+      <div class="label">Error:</div>
+      <div class="value">${params.error}</div>
+    </div>
+    <div class="infoItem">
+      <div class="label">URL:</div>
+      <div class="value">${params.url}</div>
+    </div>
+    <div class="infoItem">
+      <div class="label">TIP:</div>
+      <div class="value">${params.tipMessage}</div>
+    </div>
+    <p>
+      <ul class="stackError">
+        ${params.errorStack.map(item=>'<li>'+item+'</li>').join('')}
+      <ul>
+	</p>
+</body>
+</html>
+`;
+};
