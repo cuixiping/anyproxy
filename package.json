@@ -1,7 +1,7 @@
 {
-  "name": "anyproxy-core",
+  "name": "anyproxy",
   "version": "0.0.1",
-  "description": "A fully configurable HTTP/HTTPS proxy in Node.js, based on anyproxy 4.1.0",
+  "description": "HTTP/HTTPS proxy core in Node.js, for electron, based on alibaba/anyproxy 4.1.0",
   "main": "proxy.js",
   "dependencies": {
     "async": "~0.9.0",
@@ -17,7 +17,7 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/alibaba/anyproxy"
+    "url": "https://github.com/cuixiping/anyproxy"
   },
   "author": "cuixiping@gmail.com",
   "license": "Apache-2.0",
