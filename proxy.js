@@ -113,7 +113,8 @@ class ProxyCore extends events.EventEmitter {
     this.recorder = config.recorder;
 
     // init request handler
-    const RequestHandler = util.freshRequire('./requestHandler');
+    //const RequestHandler = util.freshRequire('./requestHandler');
+    const RequestHandler = require('./lib/requestHandler');
     this.requestHandler = new RequestHandler({
       wsIntercept: config.wsIntercept,
       httpServerPort: config.port, // the http server port for http proxy
