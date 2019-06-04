@@ -203,16 +203,16 @@ class ProxyCore extends events.EventEmitter {
         //start proxy server
         function (callback) {
           self.httpProxyServer.listen(self.proxyPort, (err) => {
-			  if (err) {
-				  throw err;
-			  }
-              //如果 self.proxyPort 是 0, 则可以在回调中获取自动分配的端口
-			  //console.log(self.httpProxyServer.address()); // { address: '::', family: 'IPv6', port: 61199 }
-              const port = self.httpProxyServer.address().port;
-			  //console.log('self.httpProxyServer.address().port : ' + port);
-			  self.proxyPort = port;
-			  //console.log('self.proxyPort #1 : ' + self.proxyPort);
-			  callback(null);
+            if (err) {
+              throw err;
+            }
+            //如果 self.proxyPort 是 0, 则可以在回调中获取自动分配的端口
+            //console.log(self.httpProxyServer.address()); // { address: '::', family: 'IPv6', port: 61199 }
+            const port = self.httpProxyServer.address().port;
+            //console.log('self.httpProxyServer.address().port : ' + port);
+            self.proxyPort = port;
+            //console.log('self.proxyPort #1 : ' + self.proxyPort);
+            callback(null);
           });
           //callback(null);
         },
@@ -221,7 +221,7 @@ class ProxyCore extends events.EventEmitter {
       //final callback
       (err, result) => {
         if (!err) {
-			//console.log('self.proxyPort #2 : ' + self.proxyPort);
+          //console.log('self.proxyPort #2 : ' + self.proxyPort);
           const tipText = (self.proxyType === T_TYPE_HTTP ? 'Http' : 'Https') + ' proxy started on port ' + self.proxyPort;
           logUtil.printLog(color.green(tipText));
 
@@ -380,6 +380,5 @@ module.exports.ProxyCore = ProxyCore;
 module.exports.ProxyServer = ProxyServer;
 //module.exports.ProxyRecorder = Recorder;
 module.exports.utils = {
-  systemProxyMgr: require('./lib/systemProxyMgr'),
-  certMgr,
+  certMgr
 };
