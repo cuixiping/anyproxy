@@ -1,6 +1,6 @@
 {
   "name": "anyproxy",
-  "version": "0.0.1",
+  "version": "4.1.0",
   "description": "HTTP/HTTPS proxy core in Node.js, for electron, based on alibaba/anyproxy 4.1.0",
   "main": "proxy.js",
   "dependencies": {
@@ -12,7 +12,7 @@
     "mime-types": "2.1.11",
     "node-easy-cert": "^1.0.0",
     "stream-throttle": "^0.1.3",
-    "ws": "^5.1.0"
+    "ws": "https://github.com/cuixiping/ws"
   },
   "devDependencies": {},
   "repository": {
