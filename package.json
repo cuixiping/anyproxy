@@ -25,7 +25,4 @@
   "engines": {
     "node": ">=6.0.0"
   }
-  "dependencies": {
-    "repo": "git+https://github.com/username/repo.git"
-  }
 }
