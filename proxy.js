@@ -13,25 +13,6 @@ const http = require('http'),
   wsServerMgr = require('./lib/wsServerMgr'),
   ThrottleGroup = require('stream-throttle').ThrottleGroup;
 
-// const memwatch = require('memwatch-next');
-
-// setInterval(() => {
-//   console.log(process.memoryUsage());
-//   const rss = Math.ceil(process.memoryUsage().rss / 1000 / 1000);
-//   console.log('Program is using ' + rss + ' mb of Heap.');
-// }, 1000);
-
-// memwatch.on('stats', (info) => {
-//   console.log('gc !!');
-//   console.log(process.memoryUsage());
-//   const rss = Math.ceil(process.memoryUsage().rss / 1000 / 1000);
-//   console.log('GC !! Program is using ' + rss + ' mb of Heap.');
-
-//   // var heapUsed = Math.ceil(process.memoryUsage().heapUsed / 1000);
-//   // console.log("Program is using " + heapUsed + " kb of Heap.");
-//   // console.log(info);
-// });
-
 const T_TYPE_HTTP = 'http',
   T_TYPE_HTTPS = 'https',
   DEFAULT_TYPE = T_TYPE_HTTP;
@@ -73,6 +54,14 @@ class ProxyCore extends events.EventEmitter {
     this.proxyType = /https/i.test(config.type || DEFAULT_TYPE) ? T_TYPE_HTTPS : T_TYPE_HTTP;
     this.proxyHostName = config.hostname || 'localhost';
     this.recorder = config.recorder;
+
+	if (config.anyProxyHome) {
+		util.setAnyProxyHome(config.anyProxyHome);
+	}
+
+	if (this.proxyType === T_TYPE_HTTPS) {
+		certMgr.init();
+	}
 
     if (parseInt(process.versions.node.split('.')[0], 10) < 4) {
       throw new Error('node.js >= v4.x is required for anyproxy');
