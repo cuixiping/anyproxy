@@ -13,7 +13,7 @@ module.exports = {
         './proxy.js'
     ],
     output: {
-		libraryTarget: "commonjs2",
+        libraryTarget: "commonjs2",
         path: __dirname,
         filename: 'proxy.bundle.js'
     },
